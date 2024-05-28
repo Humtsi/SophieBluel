@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function gestionModale () {
     // Récupérer les éléments
-    const modale = document.getElementById("modale");
+    const modale = document.getElementById("modalecover");
     const modifier = document.getElementById("modifier");
     const modeedition = document.getElementById("modeedition");
     const fermer = document.querySelector(".fa-xmark");

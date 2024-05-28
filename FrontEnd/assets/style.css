@@ -30,19 +30,6 @@ footer, header, hgroup, menu, nav, section {
 	display: block;
 }
 
-html {
-	background-color: #FFFEF8;
-	height: 100%;
-	position: relative;
-}
-
-body {
-	line-height: 1;
-	height: 100%;
-	display: flex;
-    flex-direction: column;
-}
-
 ol, ul {
 	list-style: none;
 }
@@ -63,22 +50,36 @@ table {
 }
 
 /** end reset css**/
+
+html {
+	background-color: #FFFEF8;
+	min-height: 100%;
+	position: relative;
+}
+
 main {
 	flex: 1;
+	max-width: 1000px;
+	margin: 0 auto;
 }
 
 body {
-	max-width: 1140px;
-	margin:auto;
+	
+	min-height:100vh;
+	margin:0 auto;
 	font-family: 'Work Sans' ;
 	font-size: 14px;
-	height: 100%;
+	display: flex;
+    flex-direction: column;
+	line-height: 1;
 }
 
 header {
 	display: flex;
 	justify-content: space-between;
-	margin: 50px 0
+	margin : 50px auto;
+	width: 100%;
+	max-width: 1140px;
 }
 
 section {
@@ -173,7 +174,7 @@ a {
 }
 
 #introduction figure {
-	flex: 1
+	flex: 1;
 }
 
 #introduction img {
@@ -183,7 +184,7 @@ a {
 }
 
 #introduction article {
-	flex: 1
+	flex: 1;
 }
 
 #introduction h2 {
@@ -197,30 +198,31 @@ a {
 
 /********** Affichage modale **********/
 
-#modale {
+#modalecover {
     display: none;
     position: absolute;
     z-index: 1;
     left: 0;
     top: 0;
+	bottom:0;
+	right:0;
     width: 100%;
-    height: 100%;
-    overflow: auto;
+    min-height: 100%;
     background-color: rgba(0,0,0,0.4);
-	justify-content: center; /* Centrer horizontalement */
-    align-items: center;
 }
 
 .modale {
+	position:relative;
 	display: flex;
 	flex-direction: column;
     background-color: #fefefe;
-    margin: 600px auto;
+    margin: 580px auto;
     padding: 20px;
     border: 1px solid #1D6154;
-    width: 50%;
+    width: 630px;
     text-align: center;
 	gap:15px;
+	overflow: auto;
 }
 
 /************* Modale n°1 ***********/
@@ -378,6 +380,9 @@ a {
 	height: auto;
 }
 
+#messageErreurAjoutProjet {
+	color:red;
+}
 /*********** Boutons de Filtre *********/
 
 .filtres {
@@ -498,11 +503,13 @@ input[type="submit"]{
 	text-align: center;
 	color: #1D6154;
 	font-weight: 700;
+	margin-top: 50px;
 }
 
 #messageErreur {
 	text-align: center;
 	color: red;
+	margin-bottom: 10px;
 }
 
 .mdpOublie {
