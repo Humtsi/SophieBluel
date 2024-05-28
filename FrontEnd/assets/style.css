@@ -59,7 +59,7 @@ html {
 
 main {
 	flex: 1;
-	max-width: 1000px;
+	max-width: 900px;
 	margin: 0 auto;
 }
 
@@ -488,7 +488,7 @@ input[type="submit"]{
 	display: flex;
 	flex-direction: column;
 	height: 100%;
-	width: 30%;
+	width: 380px;
 	margin: auto;
 }
 
