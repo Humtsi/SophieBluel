@@ -21,7 +21,6 @@ function recuperationWorks() {
                 return works;
             })
     } else {
-        
         return Promise.resolve(JSON.parse(works));
     }
 }

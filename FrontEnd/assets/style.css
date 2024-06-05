@@ -99,7 +99,6 @@ h1 > span {
 	font-family: 'Work Sans';
 	font-size:10px;
 	letter-spacing: 0.1em;
-;
 }
 
 h2{
@@ -499,7 +498,7 @@ input[type="submit"]{
 	margin-top: 30px;
 }
 
-.login h1 {
+.login h2 {
 	text-align: center;
 	color: #1D6154;
 	font-weight: 700;
