@@ -371,7 +371,7 @@ function ajouterProjet () {
                 throw new Error("Utilisateur non connecté");
             } else {
                 // Bug
-                messageErreur.textContent = "Saisie incorrecte";
+                messageErreur.textContent = "Photo manquante ou saisie incorrecte";
                 throw new Error("Saisie incorrecte");
             }
         })
