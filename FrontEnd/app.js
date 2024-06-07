@@ -371,8 +371,8 @@ function ajouterProjet () {
                 throw new Error("Utilisateur non connecté");
             } else {
                 // Bug
-                messageErreur.textContent = "Bug";
-                throw new Error("Bug");
+                messageErreur.textContent = "Saisie incorrecte";
+                throw new Error("Saisie incorrecte");
             }
         })
         .catch(error => {
@@ -410,8 +410,9 @@ function resetForm () {
 /********* Prévisualisation de l'image dans le formulaire **********/ 
 
 document.getElementById("photo").addEventListener("change", () => {
-    const input = document.getElementById("photo");;
-    const reader = new FileReader();
+    const input = document.getElementById("photo");
+    // Outil de lecture de fichier
+    const reader = new FileReader(); 
 
     reader.onload = function() {
         const visualisationimage = document.getElementById("visualisationimage");
@@ -426,5 +427,6 @@ document.getElementById("photo").addEventListener("change", () => {
         inputfile.classList.add("cache");
     }
 
+    // Affichage de l'image 
     reader.readAsDataURL(input.files[0]);
 });
