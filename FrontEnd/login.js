@@ -35,17 +35,13 @@ document.getElementById("formulaireConnexion").addEventListener('submit', functi
 
         } else if (response.status === 401) {
             // Erreur d'authentification (mot de passe incorrect)
-            return response.json().then(errorData => {
-                messageErreur.textContent = "Mot de passe incorrect";
-                throw new Error('Mot de passe incorrect');
-            });
+            messageErreur.textContent = "Mot de passe incorrect";
+            throw new Error('Mot de passe incorrect');
             
         } else if (response.status === 404) {
             // Utilisateur non trouvé
-            return response.json().then(errorData => {
-                messageErreur.textContent = "Email non existant";
-                throw new Error('Email non existant');
-            })
+            messageErreur.textContent = "Email non existant";
+            throw new Error('Email non existant');
         }
     })
     .then(login => {

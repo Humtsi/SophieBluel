@@ -9,7 +9,7 @@ function recuperationWorks() {
         return fetch("http://localhost:5678/api/works")
             .then(response => {
                 if (!response.ok) {
-                    throw new Error("Erreur de récupération des pièces : " + response.status);
+                    throw new Error("Erreur de récupération des travaux : " + response.status);
                 }
                 return response.json();
             })
@@ -19,7 +19,10 @@ function recuperationWorks() {
                 // Stockage des informations dans le localStorage
                 window.sessionStorage.setItem("works", valeurWorks);
                 return works;
-            })
+            }) .catch(error => {
+                // Gestion des erreurs
+                console.error("Erreur lors de la récupération des travaux:", error);
+            });
     } else {
         return Promise.resolve(JSON.parse(works));
     }
@@ -28,7 +31,7 @@ function recuperationWorks() {
 function actualisationWorks() {
     return fetch("http://localhost:5678/api/works").then(response => {
             if (!response.ok) {
-                throw new Error("Erreur de récupération des pièces : " + response.status);
+                throw new Error("Erreur de l'actualisation des pièces : " + response.status);
             }
             return response.json();
         })
@@ -39,6 +42,10 @@ function actualisationWorks() {
             window.sessionStorage.setItem("works", valeurWorks);
             return works;
         })
+        .catch(error => {
+            // Gestion des erreurs
+            console.error("Erreur lors de l'actualisation des pièces:", error);
+        });
 }
 
 function recuperationCategories() {
@@ -60,6 +67,10 @@ function recuperationCategories() {
                 window.sessionStorage.setItem("categories", valeurCategories);
                 return categories;
             })
+            .catch(error => {
+                // Gestion des erreurs
+                console.error("Erreur de récupération des catégories : ", error);
+            });
     } else {
         return Promise.resolve(JSON.parse(categories));
     }
@@ -351,22 +362,22 @@ function ajouterProjet () {
                 return response.json()
     
             } else if (response.status === 400) {
-                // Erreur d'orthographe (Cette catégorie n'existe pas)
-                return response.json().then(() => {
-                    messageErreur.textContent = "Cette catégorie n'existe pas";
-                })
+                messageErreur.textContent = "Cette catégorie n'existe pas";
+                throw new Error("Catégorie inexistante");
                 
             } else if (response.status === 401) {
                 // Utilisateur non connecté
-                return response.json().then(() => {
-                    messageErreur.textContent = "Unauthorized";
-                })
+                messageErreur.textContent = "Non autorisé";
+                throw new Error("Utilisateur non connecté");
             } else {
                 // Bug
-                return response.json().then(() => {
-                    messageErreur.textContent = "Bug";
-                })
+                messageErreur.textContent = "Bug";
+                throw new Error("Bug");
             }
+        })
+        .catch(error => {
+            // Gère les erreurs non traitées
+            console.error("Erreur:", error);
         })
     }) 
 }  
