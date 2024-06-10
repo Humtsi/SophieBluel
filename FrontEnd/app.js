@@ -48,12 +48,11 @@ async function recuperationCategories() {
 
 /********* Affichage *******/ 
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     genererFiltres ()
-    recuperationWorks().then(works => {
-        genererProjet (works)
-        genererGalerieModale (works)
-    })
+    const works = await recuperationWorks();
+    genererProjet (works)
+    genererGalerieModale (works)
     genererAffichageConnexion ()
     logout ()
     gestionModale ()
@@ -136,7 +135,7 @@ function genererProjet (works) {
 
 /************* Affichage des boutons de filtres *************/
 
-function genererFiltres() {
+async function genererFiltres() {
     
     //gestion des bouttons 
 
@@ -148,36 +147,31 @@ function genererFiltres() {
     boutonTous.innerText = "Tous";
     boutonTous.id = "button-tous";
     boutonTous.classList.add("btn");
-    boutonTous.addEventListener("click", function() {
+    boutonTous.addEventListener("click", async function() {
         document.querySelector(".gallery").innerHTML = "";
-        recuperationWorks().then(works => {
-            genererProjet(works);
-        });
+        const works = await recuperationWorks()
+        genererProjet(works);
     });
     filtres.appendChild(boutonTous);
 
     // Création boutons pour chaque categorie existante
-    recuperationCategories()
-    .then(categories => {
-        categories.forEach(categorie => {
+    const categories = await recuperationCategories()
+    categories.forEach(categorie => {
 
-            const bouton = document.createElement("button");
-            bouton.innerText = categorie.name;
-            bouton.id = `button-${categorie.name}`;
-            bouton.classList.add("btn");
+        const bouton = document.createElement("button");
+        bouton.innerText = categorie.name;
+        bouton.id = `button-${categorie.name}`;
+        bouton.classList.add("btn");
 
-            bouton.addEventListener("click", function() {
-                recuperationWorks().then(works => {
-                    const ProjetsFiltres = works.filter(work => 
-                    work.category.id === categorie.id);
-                    
-                    document.querySelector(".gallery").innerHTML = "";
-                    genererProjet(ProjetsFiltres);
-                });
-            });
-            filtres.appendChild(bouton);
+        bouton.addEventListener("click", async function() {
+            const works = await recuperationWorks();
+            const ProjetsFiltres = works.filter(work => 
+            work.category.id === categorie.id);
+            document.querySelector(".gallery").innerHTML = "";
+            genererProjet(ProjetsFiltres);
         });
-    })
+        filtres.appendChild(bouton);
+    });
 }
 
 /********* Statut connecté **********/
