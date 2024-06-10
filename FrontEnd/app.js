@@ -1,78 +1,48 @@
 /********  Récupération api ****/
 
-function recuperationWorks() {
-
+async function recuperationWorks () {
     let works = window.sessionStorage.getItem("works");
 
     if (works === null) {
         // Récupération des pièces depuis l'API et stockage dans le sessionStorage
-        return fetch("http://localhost:5678/api/works")
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Erreur de récupération des travaux : " + response.status);
-                }
-                return response.json();
-            })
-            .then(works => {
-                // Transformation des pièces en JSON
-                const valeurWorks = JSON.stringify(works);
-                // Stockage des informations dans le localStorage
-                window.sessionStorage.setItem("works", valeurWorks);
-                return works;
-            }) .catch(error => {
-                // Gestion des erreurs
-                console.error("Erreur lors de la récupération des travaux:", error);
-            });
+        const response = await fetch("http://localhost:5678/api/works");
+        const works = await response.json();
+        
+        // Transformation des pièces en JSON
+        const valeurWorks = JSON.stringify(works);
+        // Stockage des informations dans le localStorage
+        window.sessionStorage.setItem("works", valeurWorks);
+        return works;
     } else {
-        return Promise.resolve(JSON.parse(works));
+        return JSON.parse(works);
     }
 }
 
-function actualisationWorks() {
-    return fetch("http://localhost:5678/api/works").then(response => {
-            if (!response.ok) {
-                throw new Error("Erreur de l'actualisation des pièces : " + response.status);
-            }
-            return response.json();
-        })
-        .then(works => {
-            // Transformation des pièces en JSON
-            const valeurWorks = JSON.stringify(works);
-            // Stockage des informations dans le sessionStorage
-            window.sessionStorage.setItem("works", valeurWorks);
-            return works;
-        })
-        .catch(error => {
-            // Gestion des erreurs
-            console.error("Erreur lors de l'actualisation des pièces:", error);
-        });
+async function actualisationWorks() {
+    const response = await fetch("http://localhost:5678/api/works")
+    const works = await response.json();
+    const valeurWorks = JSON.stringify(works);
+    // Stockage des informations dans le sessionStorage
+    window.sessionStorage.setItem("works", valeurWorks);
+    return works;
 }
 
-function recuperationCategories() {
+async function recuperationCategories() {
     let categories = window.sessionStorage.getItem("categories");
 
     if (categories === null) {
         // Récupération des catégories depuis l'API
-        return fetch("http://localhost:5678/api/categories")
-            .then(response => {
-                if (!response.ok) {
-                    throw new Error("Erreur de récupération des catégories : " + response.status);
-                }
-                return response.json();
-            })
-            .then(categories => {
-                // Transformation des catégories en JSON
-                const valeurCategories = JSON.stringify(categories);
-                // Stockage des informations dans le sessionStorage
-                window.sessionStorage.setItem("categories", valeurCategories);
-                return categories;
-            })
-            .catch(error => {
-                // Gestion des erreurs
-                console.error("Erreur de récupération des catégories : ", error);
-            });
+        const response = await fetch("http://localhost:5678/api/categories")
+        const categories = await response.json();
+
+        // Transformation des catégories en JSON
+        const valeurCategories = JSON.stringify(categories);
+        // Stockage des informations dans le sessionStorage
+        window.sessionStorage.setItem("categories", valeurCategories);
+        return categories;
+
     } else {
-        return Promise.resolve(JSON.parse(categories));
+        return JSON.parse(categories);
     }
 }
 
@@ -285,9 +255,11 @@ function genererGalerieModale (works) {
 
 /********* Suppression d'un projet **********/ 
 
-function supprimerProjet (id) {
+async function supprimerProjet (id) {
     let token = window.sessionStorage.getItem("token");
-    fetch(`http://localhost:5678/api/works/${id}`, {
+
+    try {
+    const response = await fetch(`http://localhost:5678/api/works/${id}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
@@ -295,31 +267,28 @@ function supprimerProjet (id) {
             "Authorization": `Bearer ${token}`,
         }
     })
-    .then(response => {
-        if (response.ok) {
-            document.querySelector(".contenumodale").innerHTML = "";
-            actualisationWorks().then((works) => {
-                genererGalerieModale(works);
-                genererProjet (works)
-            })
-            return
 
-        } else if (response.status === 401) {
-            throw new Error("Pas correctement identifié");
-            
-        } else if (response.status === 500) {
-            throw new Error("Bug");
-        }
-    })
-    .catch(error => {
+    if (response.ok) {
+        document.querySelector(".contenumodale").innerHTML = "";
+        const works = await actualisationWorks ()
+        genererGalerieModale(works);
+        genererProjet (works)
+        return
+    } else if (response.status === 401) {
+        throw new Error("Pas correctement identifié");
+        
+    } else if (response.status === 500) {
+        throw new Error("Bug");
+    }
+    } catch(error) {
         // Gère les erreurs non traitées
         console.error("Erreur:", error);
-    })
+    }
 }
 
 /********* Ajout d'un projet **********/ 
 
-function ajouterProjet () {
+async function ajouterProjet () {
     
     const formData = new FormData();
     let token = window.sessionStorage.getItem("token");
@@ -330,7 +299,8 @@ function ajouterProjet () {
     const categorie = document.getElementById("categorie").value;
     const image = document.getElementById("photo").files[0];
     
-    recuperationCategories().then((categories) => {
+    try {
+        const categories = await recuperationCategories ();
         let categorieId;
     
         for (let i = 0; i < categories.length; i++) {
@@ -345,42 +315,38 @@ function ajouterProjet () {
         formData.append("category", categorieId);
     
         // Envoi du formulaire
-        fetch("http://localhost:5678/api/works", {
+        const response = await fetch("http://localhost:5678/api/works", {
             method: "POST",
             headers: {"Authorization": `Bearer ${token}`},
             body: formData,
         })
-        .then(response => {
+        
+        if (response.ok) {
+            const works = await actualisationWorks ();
+            messageErreur.textContent = "Bien reçu !";
+            genererProjet (works);
+            genererGalerieModale(works);
+            resetForm ();
+
+        } else if (response.status === 400) {
+            messageErreur.textContent = "Cette catégorie n'existe pas";
+            throw new Error("Catégorie inexistante");
             
-            if (response.ok) {
-                actualisationWorks().then((works) => {
-                    messageErreur.textContent = "Bien reçu !"
-                    genererProjet (works);
-                    genererGalerieModale(works);
-                    resetForm ()
-                });
-                return response.json()
-    
-            } else if (response.status === 400) {
-                messageErreur.textContent = "Cette catégorie n'existe pas";
-                throw new Error("Catégorie inexistante");
-                
-            } else if (response.status === 401) {
-                // Utilisateur non connecté
-                messageErreur.textContent = "Non autorisé";
-                throw new Error("Utilisateur non connecté");
-            } else {
-                // Bug
-                messageErreur.textContent = "Photo manquante ou saisie incorrecte";
-                throw new Error("Saisie incorrecte");
-            }
-        })
-        .catch(error => {
-            // Gère les erreurs non traitées
-            console.error("Erreur:", error);
-        })
-    }) 
-}  
+        } else if (response.status === 401) {
+            // Utilisateur non connecté
+            messageErreur.textContent = "Non autorisé";
+            throw new Error("Utilisateur non connecté");
+        } else {
+            // Bug
+            messageErreur.textContent = "Photo manquante ou saisie incorrecte";
+            throw new Error("Saisie incorrecte");
+        }
+
+    } catch (error) {
+        // Gère les erreurs non traitées
+        console.error("Erreur:", error);
+    }
+}
 
 document.getElementById("formajoutphoto").addEventListener("submit", function(event) {
     event.preventDefault();
