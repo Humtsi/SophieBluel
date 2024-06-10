@@ -1,4 +1,4 @@
-document.getElementById("formulaireConnexion").addEventListener('submit', function(event) {
+document.getElementById("formulaireConnexion").addEventListener('submit', async function(event) {
     event.preventDefault();
 
     const email = document.getElementById("email").value;
@@ -22,16 +22,19 @@ document.getElementById("formulaireConnexion").addEventListener('submit', functi
         password: motdepasse,
     }
 
-    // Appel à l'API
-    fetch("http://localhost:5678/api/users/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json"},
-        body: JSON.stringify(login)
-    })
-    .then(response => {
-        
+    try {
+        // Appel à l'API
+        const response = await fetch("http://localhost:5678/api/users/login", {
+            method: "POST",
+            headers: { "Content-Type": "application/json"},
+            body: JSON.stringify(login)
+        })
+
+        const logs = await response.json();
+
         if (response.ok) {
-            return response.json();
+            window.sessionStorage.setItem("token", logs.token);
+            window.location.href = "index.html";
 
         } else if (response.status === 401) {
             // Erreur d'authentification (mot de passe incorrect)
@@ -43,15 +46,9 @@ document.getElementById("formulaireConnexion").addEventListener('submit', functi
             messageErreur.textContent = "Email non existant";
             throw new Error('Email non existant');
         }
-    })
-    .then(login => {
-        if (login && login.token) {
-            window.sessionStorage.setItem("token", login.token);
-            window.location.href = "index.html";
-        }
-    })
-    .catch(error => {
+
+    } catch (error) {
         // Gère les erreurs non traitées
         console.error("Erreur:", error);
-    })
+    }
 })

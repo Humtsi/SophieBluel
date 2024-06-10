@@ -8,12 +8,13 @@ async function recuperationWorks () {
         const response = await fetch("http://localhost:5678/api/works");
         const works = await response.json();
         
-        // Transformation des pièces en JSON
+        // Transformation des pièces en JSON pour les stocker dans le storage
         const valeurWorks = JSON.stringify(works);
         // Stockage des informations dans le localStorage
         window.sessionStorage.setItem("works", valeurWorks);
         return works;
     } else {
+        // Passage du JSON à un objet javascript
         return JSON.parse(works);
     }
 }
