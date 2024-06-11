@@ -54,6 +54,8 @@ document.addEventListener("DOMContentLoaded", async () => {
     const works = await recuperationWorks();
     genererProjet (works)
     genererGalerieModale (works)
+    const categories = await recuperationCategories();
+    selectCategories(categories)
     genererAffichageConnexion ()
     logout ()
     gestionModale ()
@@ -285,6 +287,7 @@ async function supprimerProjet (id) {
 
 async function ajouterProjet () {
     
+    // Ensemble de paires clé/valeur
     const formData = new FormData();
     let token = window.sessionStorage.getItem("token");
     const messageErreur = document.getElementById("messageErreurAjoutProjet")
@@ -293,21 +296,13 @@ async function ajouterProjet () {
     const titre = document.getElementById("titre").value;
     const categorie = document.getElementById("categorie").value;
     const image = document.getElementById("photo").files[0];
+    console.log(categorie)
     
     try {
-        const categories = await recuperationCategories ();
-        let categorieId;
-    
-        for (let i = 0; i < categories.length; i++) {
-            if (categorie === categories[i].name) {
-                categorieId = categories[i].id;
-                break;
-            }
-        }
 
         formData.append("image", image);
         formData.append("title", titre);
-        formData.append("category", categorieId);
+        formData.append("category", categorie);
     
         // Envoi du formulaire
         const response = await fetch("http://localhost:5678/api/works", {
@@ -341,6 +336,20 @@ async function ajouterProjet () {
         // Gère les erreurs non traitées
         console.error("Erreur:", error);
     }
+}
+
+/********* Génération du Select du formulaire **********/ 
+
+function selectCategories(categories) {
+
+    const categorieSelect = document.getElementById('categorie');
+
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category.id;
+        option.textContent = category.name;
+        categorieSelect.appendChild(option);
+    });
 }
 
 document.getElementById("formajoutphoto").addEventListener("submit", function(event) {

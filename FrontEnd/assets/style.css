@@ -450,7 +450,8 @@ figcaption {
 	flex-direction: column;
 }
 
-#contact input, #formulaireConnexion input, .contenuajoutphoto input {
+#contact input, #formulaireConnexion input,
+ .contenuajoutphoto input, .contenuajoutphoto select {
 	height: 50px;
 	font-size: 1.2em;
 	border: none;
