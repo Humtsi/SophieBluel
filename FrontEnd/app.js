@@ -296,14 +296,12 @@ async function ajouterProjet () {
     const titre = document.getElementById("titre").value;
     const categorie = document.getElementById("categorie").value;
     const image = document.getElementById("photo").files[0];
-    console.log(categorie)
+
+    formData.append("image", image);
+    formData.append("title", titre);
+    formData.append("category", categorie);
     
     try {
-
-        formData.append("image", image);
-        formData.append("title", titre);
-        formData.append("category", categorie);
-    
         // Envoi du formulaire
         const response = await fetch("http://localhost:5678/api/works", {
             method: "POST",
